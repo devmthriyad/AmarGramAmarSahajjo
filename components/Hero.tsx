@@ -9,7 +9,7 @@ const BACKGROUND_IMAGES = [
   // Hands/Charity Concept
   "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?q=80&w=1920&auto=format&fit=crop", 
   // Islamic Pattern/Architecture detail
-  "https://images.unsplash.com/photo-1555421528-66236b289c03?q=80&w=1920&auto=format&fit=crop"
+  "https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?q=80&w=1920&auto=format&fit=crop"
 ];
 
 const Hero: React.FC = () => {
