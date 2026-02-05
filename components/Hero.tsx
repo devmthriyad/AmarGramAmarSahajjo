@@ -3,13 +3,13 @@ import { HeartHandshake } from 'lucide-react';
 
 const BACKGROUND_IMAGES = [
   // Beautiful Mosque - High quality, reliable link
-  "https://images.unsplash.com/photo-1519817650390-64a93db51149?q=80&w=1920&auto=format&fit=crop",
-  // Rural/Village Nature - Green scenery
-  "https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=1920&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1646349825747-6c3e2198ecf2?q=80&w=1920&auto=format&fit=crop",
+  // Rural/Village Nature - Real Bangladesh/Green Scenery (Updated)
+  "https://images.unsplash.com/photo-1680239179048-f7bbf6cd19ff?q=80&w=1920&auto=format&fit=crop",
   // Hands/Charity Concept
   "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?q=80&w=1920&auto=format&fit=crop", 
-  // Islamic Pattern/Architecture detail
-  "https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?q=80&w=1920&auto=format&fit=crop"
+  // Islamic Architecture/Pattern (Updated to specific user request)
+  "https://images.unsplash.com/photo-1524756520665-18225d7d929b?q=80&w=1920&auto=format&fit=crop"
 ];
 
 const Hero: React.FC = () => {

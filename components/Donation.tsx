@@ -112,15 +112,18 @@ const Donation: React.FC = () => {
     setStatus('IDLE');
   };
 
-  const getFinalAmount = () => amount === 'custom' ? Number(customAmount) : Number(amount);
+  const getFinalAmount = () => {
+    return amount === 'custom' ? Number(customAmount) : Number(amount);
+  };
 
   const getMethodColor = (m: PaymentMethod) => {
       switch(m) {
           case PaymentMethod.BKASH: return "bg-pink-600";
           case PaymentMethod.NAGAD: return "bg-orange-600";
           case PaymentMethod.ROCKET: return "bg-purple-600";
+          default: return "bg-gray-500";
       }
-  }
+  };
 
   // --- SUB-COMPONENTS ---
 
@@ -152,7 +155,7 @@ const Donation: React.FC = () => {
 
   // 2. Mock UddoktaPay Gateway
   const MockGateway = () => (
-    <div className="absolute inset-0 z-50 bg-white flex flex-col animate-fade-in-up">
+    <div className="w-full h-full min-h-[500px] bg-white flex flex-col animate-fade-in-up">
         {/* Gateway Header */}
         <div className="bg-gray-900 text-white p-4 flex justify-between items-center shadow-md">
             <div className="flex items-center gap-2">
@@ -182,7 +185,7 @@ const Donation: React.FC = () => {
                     <div className="flex items-center justify-between p-3 border rounded-lg cursor-pointer bg-emerald-50 border-emerald-500 relative">
                         <div className="flex items-center gap-3">
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold ${getMethodColor(method)}`}>
-                                {method[0]}
+                                {method.toString().charAt(0)}
                             </div>
                             <div>
                                 <p className="font-bold text-sm">{method}</p>
@@ -220,12 +223,12 @@ const Donation: React.FC = () => {
       
       <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 w-full max-w-xs mb-8">
         <div className="flex justify-between text-sm mb-2">
-            <span className="text-gray-500">ট্রানজেকশন আইডি:</span>
-            <span className="font-mono font-bold text-gray-800">TXN{Date.now().toString().slice(-8)}</span>
-        </div>
-        <div className="flex justify-between text-sm">
             <span className="text-gray-500">তারিখ:</span>
             <span className="font-medium text-gray-800">{new Date().toLocaleDateString('bn-BD')}</span>
+        </div>
+        <div className="flex justify-between text-sm mb-2">
+            <span className="text-gray-500">ট্রানজেকশন আইডি:</span>
+            <span className="font-mono font-bold text-gray-800">TXN{Date.now().toString().slice(-8)}</span>
         </div>
       </div>
 
