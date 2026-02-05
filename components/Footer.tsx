@@ -22,7 +22,7 @@ const Footer: React.FC = () => {
           <div className="text-center md:text-left">
             <h3 className="text-2xl font-bold text-white mb-4 flex items-center justify-center md:justify-start gap-2">
               <Globe size={24} className="text-emerald-500" />
-              <span>আমার গ্রাম <span className="text-gold">আমার সাহায্য</span></span>
+              <span>আমার গ্রাম <span className="text-gold">আমার সহযোগিতা</span></span>
             </h3>
             <p className="text-sm text-gray-400 leading-relaxed mb-6">
               গ্রামের সুবিধাবঞ্চিত মানুষের জীবনমান উন্নয়নে একটি অলাভজনক উদ্যোগ। আপনার সহযোগিতা আমাদের শক্তি।
@@ -43,7 +43,7 @@ const Footer: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center justify-center md:justify-start gap-3 p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800 transition-colors">
                     <MapPin className="text-emerald-500 flex-shrink-0" size={20} />
-                    <span className="text-sm">বিবির হাট, চট্টগ্রাম, বাংলাদেশ</span>
+                    <span className="text-sm">চট্টগ্রাম, বাংলাদেশ</span>
                 </div>
                 <div className="flex items-center justify-center md:justify-start gap-3 p-3 bg-gray-800/50 rounded-lg hover:bg-gray-800 transition-colors">
                     <Phone className="text-emerald-500 flex-shrink-0" size={20} />
@@ -69,7 +69,7 @@ const Footer: React.FC = () => {
         </div>
         
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
-          <p>© {new Date().getFullYear()} আমার গ্রাম আমার সাহায্য। সর্বস্বত্ব সংরক্ষিত।</p>
+          <p>© {new Date().getFullYear()} আমার গ্রাম আমার সহযোগিতা। সর্বস্বত্ব সংরক্ষিত।</p>
           <div className="flex items-center gap-1 mt-4 md:mt-0 bg-gray-800 px-4 py-1 rounded-full">
             <span>Made with</span>
             <Heart size={14} className="text-red-500 fill-current animate-pulse" />

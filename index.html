@@ -5,10 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>আমার গ্রাম আমার সাহায্য | গ্রাম উন্নয়ন প্রকল্প</title>
     <meta name="description" content="আমাদের গ্রামের উন্নয়নের জন্য একসাথে হাত মিলিয়ে কাজ করি। মসজিদ, স্কুল, ও মাদ্রাসা নির্মাণ এবং গরিব অসহায়দের সাহায্যার্থে।" />
-    <script src="https://cdn.tailwindcss.com"></script>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Hind Siliguri', 'sans-serif'],
+              arabic: ['Noto Sans Arabic', 'sans-serif'],
+            },
+            colors: {
+              gold: '#D4AF37',
+            }
+          }
+        }
+      }
+    </script>
+
     <style>
       body {
         font-family: 'Hind Siliguri', sans-serif;
@@ -20,7 +38,7 @@
       .arabic-font {
         font-family: 'Noto Sans Arabic', sans-serif;
       }
-      /* Custom Gold Color for accents */
+      /* Custom Gold Color for accents (fallback/utility) */
       .text-gold {
         color: #D4AF37;
       }
@@ -30,6 +48,9 @@
       .border-gold {
         border-color: #D4AF37;
       }
+      .container{
+         max-width: 1280px !important;
+      }
       
       /* Animation Utilities */
       @keyframes fade-in-up {
@@ -38,6 +59,15 @@
       }
       .animate-fade-in-up {
         animation: fade-in-up 0.8s ease-out forwards;
+      }
+      
+      /* Smooth bounce animation */
+      @keyframes bounce-slow {
+        0%, 100% { transform: translateY(-5%); }
+        50% { transform: translateY(0); }
+      }
+      .animate-bounce-slow {
+        animation: bounce-slow 3s infinite;
       }
     </style>
   <script type="importmap">

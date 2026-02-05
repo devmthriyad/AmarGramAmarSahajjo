@@ -3,13 +3,13 @@ import { HeartHandshake } from 'lucide-react';
 
 const BACKGROUND_IMAGES = [
   // Beautiful Mosque - High quality, reliable link
-  "https://images.unsplash.com/photo-1646349825747-6c3e2198ecf2?q=80&w=1920&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1519817650390-64a93db51149?q=80&w=1920&auto=format&fit=crop",
   // Rural/Village Nature - Real Bangladesh/Green Scenery (Updated)
-  "https://images.unsplash.com/photo-1680239179048-f7bbf6cd19ff?q=80&w=1920&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1582260563454-e054457e5d23?q=80&w=1920&auto=format&fit=crop",
   // Hands/Charity Concept
   "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?q=80&w=1920&auto=format&fit=crop", 
   // Islamic Architecture/Pattern (Updated to specific user request)
-  "https://images.unsplash.com/photo-1524756520665-18225d7d929b?q=80&w=1920&auto=format&fit=crop"
+  "https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?q=80&w=1920&auto=format&fit=crop"
 ];
 
 const Hero: React.FC = () => {
@@ -159,7 +159,7 @@ const Hero: React.FC = () => {
             <HeartHandshake size={64} className="text-gold drop-shadow-lg" />
           </div>
           
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 drop-shadow-xl leading-tight font-serif tracking-wide">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 drop-shadow-xl leading-tight tracking-wide">
             আমার গ্রাম <span className="text-gold">আমার সাহায্য</span>
           </h1>
           
