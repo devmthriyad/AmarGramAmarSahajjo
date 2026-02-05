@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { PaymentMethod } from '../types';
 import { PROJECTS } from '../constants';
-import { CheckCircle, ShieldCheck, AlertCircle, ChevronDown } from 'lucide-react';
+import { CheckCircle, ShieldCheck, AlertCircle, ChevronDown, CreditCard, Lock, X } from 'lucide-react';
+
+type PaymentStatus = 'IDLE' | 'LOADING_GATEWAY' | 'GATEWAY_OPEN' | 'VERIFYING' | 'SUCCESS';
 
 const Donation: React.FC = () => {
   // Donation Amount State
@@ -14,9 +16,8 @@ const Donation: React.FC = () => {
   const [selectedProject, setSelectedProject] = useState('general');
   const [method, setMethod] = useState<PaymentMethod>(PaymentMethod.BKASH);
   
-  // UI State
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // Logic State
+  const [status, setStatus] = useState<PaymentStatus>('IDLE');
   const [errors, setErrors] = useState<{name?: string; phone?: string; amount?: string}>({});
 
   // Validation Logic
@@ -24,7 +25,6 @@ const Donation: React.FC = () => {
     const newErrors: {name?: string; phone?: string; amount?: string} = {};
     let isValid = true;
 
-    // Name Validation
     if (!name.trim()) {
       newErrors.name = "আপনার নাম আবশ্যক";
       isValid = false;
@@ -33,17 +33,15 @@ const Donation: React.FC = () => {
       isValid = false;
     }
 
-    // Phone Validation (Bangladesh Format: 01xxxxxxxxx)
     const phoneRegex = /^01[3-9]\d{8}$/;
     if (!phone.trim()) {
       newErrors.phone = "মোবাইল নম্বর আবশ্যক";
       isValid = false;
     } else if (!phoneRegex.test(phone)) {
-      newErrors.phone = "সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন (যেমন: 017...)";
+      newErrors.phone = "সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন";
       isValid = false;
     }
 
-    // Amount Validation
     const finalAmount = amount === 'custom' ? Number(customAmount) : Number(amount);
     if (!finalAmount || isNaN(finalAmount) || finalAmount < 10) {
       newErrors.amount = "অনুদান ন্যূনতম ১০ টাকা হতে হবে";
@@ -60,7 +58,7 @@ const Donation: React.FC = () => {
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value.replace(/\D/g, ''); // Allow only numbers
+    const val = e.target.value.replace(/\D/g, ''); 
     setPhone(val);
     if (errors.phone) setErrors({ ...errors, phone: undefined });
   };
@@ -79,34 +77,42 @@ const Donation: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (validate()) {
-      setIsSubmitting(true);
-      // Simulate API call
+      // Step 1: Show Skeleton loading for Gateway
+      setStatus('LOADING_GATEWAY');
+      
+      // Simulate Network Request to Gateway
       setTimeout(() => {
-        setIsSuccess(true);
-        setIsSubmitting(false);
-        
-        // Reset Form
-        setName('');
-        setPhone('');
-        setAmount('1000');
-        setCustomAmount('');
-        setSelectedProject('general');
-        
-        // Reset success message after 5 seconds
-        setTimeout(() => setIsSuccess(false), 5000);
+        setStatus('GATEWAY_OPEN');
       }, 1500);
     }
   };
 
-  const getPaymentNumber = (method: PaymentMethod) => {
-    switch(method) {
-        case PaymentMethod.BKASH: return "017XX-XXXXXX";
-        case PaymentMethod.NAGAD: return "018XX-XXXXXX";
-        case PaymentMethod.ROCKET: return "019XX-XXXXXX";
-    }
+  const handleGatewayPayment = () => {
+    // Step 2: Show Skeleton loading for Verification
+    setStatus('VERIFYING');
+
+    // Simulate Payment Processing
+    setTimeout(() => {
+        setStatus('SUCCESS');
+        
+        // Reset logic handled after viewing success
+        setTimeout(() => {
+            // Optional auto-reset or keep success state
+        }, 8000);
+    }, 2000);
   };
+
+  const resetForm = () => {
+    setName('');
+    setPhone('');
+    setAmount('1000');
+    setCustomAmount('');
+    setSelectedProject('general');
+    setStatus('IDLE');
+  };
+
+  const getFinalAmount = () => amount === 'custom' ? Number(customAmount) : Number(amount);
 
   const getMethodColor = (m: PaymentMethod) => {
       switch(m) {
@@ -116,17 +122,133 @@ const Donation: React.FC = () => {
       }
   }
 
+  // --- SUB-COMPONENTS ---
+
+  // 1. Skeleton Loader
+  const PaymentSkeleton = () => (
+    <div className="space-y-6 w-full animate-pulse p-4">
+      <div className="h-8 bg-gray-200 rounded w-3/4 mx-auto mb-8"></div>
+      
+      <div className="space-y-4">
+        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+        <div className="h-12 bg-gray-200 rounded w-full"></div>
+      </div>
+
+      <div className="space-y-4">
+        <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+        <div className="h-12 bg-gray-200 rounded w-full"></div>
+      </div>
+      
+      <div className="flex gap-4 mt-6">
+        <div className="h-16 bg-gray-200 rounded w-1/3"></div>
+        <div className="h-16 bg-gray-200 rounded w-1/3"></div>
+        <div className="h-16 bg-gray-200 rounded w-1/3"></div>
+      </div>
+
+      <div className="h-14 bg-gray-300 rounded-xl w-full mt-8"></div>
+      <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto mt-4"></div>
+    </div>
+  );
+
+  // 2. Mock UddoktaPay Gateway
+  const MockGateway = () => (
+    <div className="absolute inset-0 z-50 bg-white flex flex-col animate-fade-in-up">
+        {/* Gateway Header */}
+        <div className="bg-gray-900 text-white p-4 flex justify-between items-center shadow-md">
+            <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-blue-500 rounded flex items-center justify-center font-bold text-lg">U</div>
+                <span className="font-bold tracking-wide">UddoktaPay</span>
+            </div>
+            <button onClick={() => setStatus('IDLE')} className="text-gray-400 hover:text-white">
+                <X size={20} />
+            </button>
+        </div>
+
+        {/* Sandbox Badge */}
+        <div className="bg-orange-100 text-orange-800 text-xs font-bold text-center py-1 border-b border-orange-200">
+            SANDBOX MODE - TEST PAYMENT
+        </div>
+
+        {/* Gateway Body */}
+        <div className="flex-grow p-6 flex flex-col justify-center items-center">
+            <div className="w-full max-w-sm bg-white border border-gray-100 shadow-xl rounded-xl overflow-hidden">
+                <div className="p-6 border-b border-gray-100 text-center bg-gray-50">
+                    <p className="text-gray-500 text-sm mb-1">Total Payable</p>
+                    <h3 className="text-3xl font-bold text-gray-800">৳{getFinalAmount()}</h3>
+                    <p className="text-xs text-blue-600 mt-2 bg-blue-50 inline-block px-2 py-1 rounded">Invoice: INV-{Date.now().toString().slice(-6)}</p>
+                </div>
+                
+                <div className="p-6 space-y-4">
+                    <div className="flex items-center justify-between p-3 border rounded-lg cursor-pointer bg-emerald-50 border-emerald-500 relative">
+                        <div className="flex items-center gap-3">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold ${getMethodColor(method)}`}>
+                                {method[0]}
+                            </div>
+                            <div>
+                                <p className="font-bold text-sm">{method}</p>
+                                <p className="text-xs text-gray-500">Personal Account</p>
+                            </div>
+                        </div>
+                        <div className="w-4 h-4 rounded-full bg-emerald-500 border-2 border-white shadow"></div>
+                    </div>
+                </div>
+
+                <div className="p-6 bg-gray-50 border-t border-gray-100">
+                    <button 
+                        onClick={handleGatewayPayment}
+                        className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg shadow hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                    >
+                        <Lock size={16} /> Pay Now
+                    </button>
+                    <div className="text-center mt-3 flex items-center justify-center gap-1 text-xs text-gray-400">
+                        <ShieldCheck size={12} /> Secured by UddoktaPay
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  );
+
+  // 3. Success View
+  const SuccessView = () => (
+    <div className="h-full flex flex-col items-center justify-center text-center animate-fade-in p-8">
+      <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6 shadow-lg animate-bounce-slow">
+        <CheckCircle className="text-green-600 w-10 h-10" />
+      </div>
+      <h3 className="text-2xl font-bold text-gray-800 mb-2">জাজাকাল্লাহ খাইরান!</h3>
+      <p className="text-gray-600 mb-6">আপনার ৳{getFinalAmount()} অনুদান সফলভাবে গৃহীত হয়েছে।</p>
+      
+      <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 w-full max-w-xs mb-8">
+        <div className="flex justify-between text-sm mb-2">
+            <span className="text-gray-500">ট্রানজেকশন আইডি:</span>
+            <span className="font-mono font-bold text-gray-800">TXN{Date.now().toString().slice(-8)}</span>
+        </div>
+        <div className="flex justify-between text-sm">
+            <span className="text-gray-500">তারিখ:</span>
+            <span className="font-medium text-gray-800">{new Date().toLocaleDateString('bn-BD')}</span>
+        </div>
+      </div>
+
+      <button 
+        onClick={resetForm}
+        className="text-emerald-600 font-bold hover:underline flex items-center gap-2"
+      >
+        <ChevronDown className="rotate-90" size={16} /> ফিরে যান
+      </button>
+    </div>
+  );
+
   return (
     <section id="donate" className="py-20 bg-emerald-50 relative overflow-hidden">
       <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-emerald-200 rounded-full opacity-20 blur-3xl"></div>
       <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-gold rounded-full opacity-10 blur-3xl"></div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row">
+        <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row min-h-[600px]">
           
           {/* Left Info Panel */}
-          <div className="md:w-5/12 bg-emerald-600 text-white p-8 md:p-12 flex flex-col justify-between">
-            <div>
+          <div className="md:w-5/12 bg-emerald-600 text-white p-8 md:p-12 flex flex-col justify-between relative overflow-hidden">
+            <div className="relative z-10">
               <h2 className="text-3xl font-bold mb-4">আপনার দান, তাদের হাসি</h2>
               <p className="opacity-90 mb-8">
                 আপনার সামান্য অনুদান একজন মানুষের জীবন পরিবর্তন করতে পারে। আল্লাহর সন্তুষ্টির উদ্দেশ্যে দান করুন।
@@ -142,36 +264,36 @@ const Donation: React.FC = () => {
                   <span className="font-medium">সরাসরি প্রকল্পে ব্যবহার</span>
                 </li>
                 <li className="flex items-center gap-3">
-                  <CheckCircle className="text-gold" size={24} />
-                  <span className="font-medium">নিরাপদ পেমেন্ট</span>
+                  <CreditCard className="text-gold" size={24} />
+                  <span className="font-medium">UddoktaPay গেটওয়ে</span>
                 </li>
               </ul>
             </div>
             
-            <div className="mt-12 p-4 bg-emerald-700/50 rounded-xl border border-emerald-500">
-               <p className="text-sm opacity-80 mb-2">সাহায্যের জন্য যোগাযোগ করুন:</p>
+            {/* Background Pattern */}
+            <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
+            
+            <div className="relative z-10 mt-12 p-4 bg-emerald-700/50 rounded-xl border border-emerald-500 backdrop-blur-sm">
+               <p className="text-sm opacity-80 mb-2">হেল্পলাইন (২৪/৭):</p>
                <p className="text-xl font-mono font-bold">018XX-XXXXXX</p>
             </div>
           </div>
 
-          {/* Right Form Panel */}
-          <div className="md:w-7/12 p-8 md:p-12 bg-white">
-            {isSuccess ? (
-              <div className="h-full flex flex-col items-center justify-center text-center animate-fade-in">
-                <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
-                  <CheckCircle className="text-green-600 w-10 h-10" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-2">জাজাকাল্লাহ খাইরান!</h3>
-                <p className="text-gray-600">আপনার অনুদান সফলভাবে গৃহীত হয়েছে। আল্লাহ আপনার দান কবুল করুন।</p>
-                <button 
-                  onClick={() => setIsSuccess(false)}
-                  className="mt-8 text-emerald-600 font-semibold hover:underline"
-                >
-                  ফিরে যান
-                </button>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Right Panel (Form / Loading / Gateway / Success) */}
+          <div className="md:w-7/12 p-8 md:p-12 bg-white relative">
+            
+            {/* 1. Loading Skeleton View */}
+            {(status === 'LOADING_GATEWAY' || status === 'VERIFYING') && <PaymentSkeleton />}
+
+            {/* 2. Mock Gateway View */}
+            {status === 'GATEWAY_OPEN' && <MockGateway />}
+
+            {/* 3. Success View */}
+            {status === 'SUCCESS' && <SuccessView />}
+
+            {/* 4. Default Form View */}
+            {status === 'IDLE' && (
+              <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
                 
                 {/* Amount Selection */}
                 <div>
@@ -266,7 +388,7 @@ const Donation: React.FC = () => {
 
                 {/* Payment Method */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">পেমেন্ট মেথড</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">পেমেন্ট মেথড (UddoktaPay)</label>
                   <div className="flex gap-4">
                     {Object.values(PaymentMethod).map((m) => (
                       <button
@@ -283,24 +405,17 @@ const Donation: React.FC = () => {
                       </button>
                     ))}
                   </div>
-                  <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200 text-center animate-fade-in">
-                    <p className="text-sm text-gray-600">নিচের নাম্বারে সেন্ড মানি করুন:</p>
-                    <p className="text-lg font-bold text-gray-800 font-mono mt-1 select-all">{getPaymentNumber(method)}</p>
-                  </div>
                 </div>
 
                 <button 
                   type="submit" 
-                  disabled={isSubmitting}
-                  className={`w-full bg-emerald-600 text-white font-bold text-lg py-4 rounded-xl shadow-lg hover:bg-emerald-700 hover:shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
+                  className="w-full bg-emerald-600 text-white font-bold text-lg py-4 rounded-xl shadow-lg hover:bg-emerald-700 hover:shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2"
                 >
-                  {isSubmitting ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      প্রক্রিয়াধীন...
-                    </>
-                  ) : 'এখনই অনুদান করুন'}
+                  এখনই অনুদান করুন
                 </button>
+                <p className="text-xs text-center text-gray-400">
+                  By clicking Donate, you agree to our Terms. Secured by UddoktaPay Sandbox.
+                </p>
               </form>
             )}
           </div>
